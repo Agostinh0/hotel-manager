@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.cavalcanti.hotelmanager.models.Stay;
+import com.cavalcanti.hotelmanager.pricing.constants.HotelPricingRuleConstants;
 
 public class HotelPricingRule {
 	
@@ -30,7 +31,8 @@ public class HotelPricingRule {
 		LocalTime checkOutTime = 
 				LocalTime.of(stay.getCheckOutTime().getHour(), stay.getCheckOutTime().getMinute());
 		
-		if(checkOutTime.isAfter(LocalTime.of(16, 30))) {
+		if(checkOutTime.isAfter(LocalTime.of(HotelPricingRuleConstants.DAILY_LIMIT_HOUR
+				, HotelPricingRuleConstants.DAILY_LIMIT_MINUTE))) {
 			daysSpentOnHotel
 				.add(daysSpentOnHotel.get(daysSpentOnHotel.size() - 1).plus(1));
 		}
@@ -40,17 +42,17 @@ public class HotelPricingRule {
 	
 	public static Double getDailyValueOnWeekend(Stay stay) {
 		if(stay.getGarageNeeded()) {
-			return (double) 170;
+			return (double) HotelPricingRuleConstants.DAILY_VALUE_ON_WEEKEND_WITH_GARAGE_FEE;
 		}else {
-			return (double) 150;
+			return (double) HotelPricingRuleConstants.DAILY_VALUE_ON_WEEKEND_WITHOUT_GARAGE_FEE;
 		}
 	}
 	
 	public static Double getDailyValue(Stay stay) {
 		if(stay.getGarageNeeded()) {
-			return (double) 135;
+			return (double) HotelPricingRuleConstants.DAILY_VALUE_WITH_GARAGE_FEE;
 		}else {
-			return (double) 120;
+			return (double) HotelPricingRuleConstants.DAILY_VALUE_WITHOUT_GARAGE_FEE;
 		}
 	}
 }
