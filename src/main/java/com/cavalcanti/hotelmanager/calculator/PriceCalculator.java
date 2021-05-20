@@ -4,17 +4,17 @@ import java.time.DayOfWeek;
 import java.util.List;
 
 import com.cavalcanti.hotelmanager.models.Stay;
+import com.cavalcanti.hotelmanager.pricing.HotelPricingRule;
 
 public class PriceCalculator {
 	
 	public static Double calculatePrice(Stay stay) {
 		
-		DayOfWeekRule rule = new DayOfWeekRule();
+		List<DayOfWeek> daysSpentOnHotel = HotelPricingRule.getDaysOfTheWeekSpentOnHotel(stay);
+		int numberOfWeekendDays = HotelPricingRule.getNumberOfWeekendDays(daysSpentOnHotel);
 		
-		List<DayOfWeek> daysSpentOnHotel = rule.getStayDaysOfTheWeek(stay);
-		int weekendDaysCount = rule.getNumberOfWeekendDays(daysSpentOnHotel);
-		
-		return (double) ((150 * weekendDaysCount) + (120 * (daysSpentOnHotel.size() - weekendDaysCount)));
+		return (double) ((HotelPricingRule.getDailyValueOnWeekend(stay) * numberOfWeekendDays) 
+				+ (HotelPricingRule.getDailyValue(stay) * (daysSpentOnHotel.size() - numberOfWeekendDays)));
 	}
 
 }

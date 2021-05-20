@@ -1,22 +1,21 @@
-package com.cavalcanti.hotelmanager;
+package com.cavalcanti.hotelmanager.calculator;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.Assertions;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.cavalcanti.hotelmanager.calculator.PriceCalculator;
 import com.cavalcanti.hotelmanager.models.Guest;
 import com.cavalcanti.hotelmanager.models.Stay;
 
 @SpringBootTest(classes = {PriceCalculator.class})
 @ExtendWith(SpringExtension.class)
-public class StayTest {
+public class PriceCalculatorTest {
 	
 	@Test
 	public void shouldCalculateFinalValueByGivenDates() {
