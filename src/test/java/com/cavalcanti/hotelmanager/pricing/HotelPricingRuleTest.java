@@ -80,4 +80,47 @@ public class HotelPricingRuleTest {
 		//Validation
 		Assertions.assertEquals(170, value);
 	}
+	
+	@Test
+	public void shouldReturn150AsDailyValueWithoutGarageFee() {
+		//Creating scenario
+		Guest guest = new Guest("547.542.810-71", "Matheus", "987654321");
+		Stay stay = 
+				new Stay(1, 201, guest, LocalDateTime.of(LocalDate.of(2021, 05, 21), LocalTime.of(15, 00)), false);
+		
+		//Action
+		Double value = HotelPricingRule.getDailyValueOnWeekend(stay);
+		
+		//Validation
+		Assertions.assertEquals(150, value);
+	}
+	
+	@Test
+	public void shouldReturn135AsDailyValueWithGarageFeeIncluded() {
+		//Creating scenario
+		Guest guest = new Guest("547.542.810-71", "Matheus", "987654321");
+		Stay stay = 
+				new Stay(1, 201, guest, LocalDateTime.of(LocalDate.of(2021, 05, 21), LocalTime.of(15, 00)), true);
+		
+		//Action
+		Double value = HotelPricingRule.getDailyValue(stay);
+		
+		//Validation
+		Assertions.assertEquals(135, value);
+	}
+	
+	@Test
+	public void shouldReturn120AsDailyValueWithoutGarageFee() {
+		//Creating scenario
+		Guest guest = new Guest("547.542.810-71", "Matheus", "987654321");
+		Stay stay = 
+				new Stay(1, 201, guest, LocalDateTime.of(LocalDate.of(2021, 05, 21), LocalTime.of(15, 00)), false);
+		
+		//Action
+		Double value = HotelPricingRule.getDailyValue(stay);
+		
+		//Validation
+		Assertions.assertEquals(120, value);
+	}
+	
 }

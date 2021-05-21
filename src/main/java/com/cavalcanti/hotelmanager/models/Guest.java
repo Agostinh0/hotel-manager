@@ -11,11 +11,14 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.br.CPF;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Guest {
 	
 	@Id
-	@CPF
+	@CPF(message = "Invalid CPF!")
 	private String cpf;
 	
 	@NotNull
@@ -32,7 +35,9 @@ public class Guest {
 		orphanRemoval = true
 	)
 	private List<Stay> stays;
-
+	
+	public Guest() {}
+	
 	public Guest(@CPF String cpf, String name, String phone) {
 		super();
 		this.cpf = cpf;

@@ -30,4 +30,20 @@ public class PriceCalculatorTest {
 		Assertions.assertEquals(540, finalValue);
 		
 	}
+	
+	@Test
+	public void shouldChargeWithAnExtraDailyFeeForPostSixteenThirtyPMCheckOut() {
+		//Creating scenario
+		Guest guest = new Guest("547.542.810-71", "Matheus", "987654321");
+		Stay stay = 
+				new Stay(1, 201, guest, LocalDateTime.of(LocalDate.of(2021, 05, 21), LocalTime.of(15, 00)), false);
+		stay.setCheckOutTime(LocalDateTime.of(LocalDate.of(2021, 05, 25), LocalTime.of(16, 31)));
+		
+		//Action
+		Double finalValue = PriceCalculator.calculatePrice(stay);
+		
+		//Validation
+		Assertions.assertEquals(660, finalValue);
+		
+}
 }
