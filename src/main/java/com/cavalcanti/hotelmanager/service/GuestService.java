@@ -2,13 +2,14 @@ package com.cavalcanti.hotelmanager.service;
 
 import java.util.Optional;
 
+import com.cavalcanti.hotelmanager.dtos.GuestDTO;
 import com.cavalcanti.hotelmanager.models.Guest;
 
 public interface GuestService {
 	
-	Iterable<Guest> getAllGuests();
+	Iterable<GuestDTO> getAllGuests();
 	
-	Optional<Guest> getGuestByCpf(String cpf);
+	Optional<GuestDTO> getGuestByCpf(String cpf);
 	
 	Guest saveGuest(Guest guest);
 	

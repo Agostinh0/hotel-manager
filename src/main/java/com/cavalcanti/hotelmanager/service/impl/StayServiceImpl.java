@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cavalcanti.hotelmanager.calculator.PriceCalculator;
+import com.cavalcanti.hotelmanager.dtos.GuestDTO;
+import com.cavalcanti.hotelmanager.dtos.StayDTO;
+import com.cavalcanti.hotelmanager.dtos.mappers.GuestDTOMapper;
+import com.cavalcanti.hotelmanager.dtos.mappers.StayDTOMapper;
 import com.cavalcanti.hotelmanager.models.Guest;
 import com.cavalcanti.hotelmanager.models.Stay;
 import com.cavalcanti.hotelmanager.repository.GuestRepository;
@@ -26,24 +30,57 @@ public class StayServiceImpl implements StayService{
 	GuestRepository guestRepository;
 	
 	@Override
-	public Optional<Stay> getStayById(int id) {
-		return stayRepository.findById(id);
+	public Optional<StayDTO> getStayById(int id) {	
+		Optional<Stay> optionalStay = stayRepository.findById(id);
+		if(optionalStay.isPresent()) {
+			Stay stay = optionalStay.get();
+			
+			Optional<StayDTO> dto = Optional.of(
+					new StayDTO(stay.getId(),
+							stay.getRoomId(),
+							new GuestDTO(stay.getGuest().getCpf(),
+										 stay.getGuest().getName(),
+										 stay.getGuest().getPhone()),
+							stay.getCheckInDateTime(),
+							stay.getCheckOutDateTime(),
+							stay.getFinalValue(),
+							stay.getGarageNeeded()));
+			return dto;
+		}else {
+			return null;
+		}
 	}
 
 	@Override
-	public Iterable<Stay> getAllStays() {
-		return stayRepository.findAll();
+	public Iterable<StayDTO> getAllStays() {
+		
+		Iterable<Stay> stays = stayRepository.findAll();
+		List<StayDTO> dtos = new ArrayList<>();
+		
+		for(Stay stay : stays) {
+			dtos.add(new StayDTO(stay.getId(),
+					stay.getRoomId(),
+					new GuestDTO(stay.getGuest().getCpf(),
+								 stay.getGuest().getName(),
+								 stay.getGuest().getPhone()),
+					stay.getCheckInDateTime(),
+					stay.getCheckOutDateTime(),
+					stay.getFinalValue(),
+					stay.getGarageNeeded()));
+		}
+		
+		return dtos;
 	}
 
 	@Override
-	public Iterable<Guest> getCurrentGuests() {
+	public Iterable<GuestDTO> getCurrentGuests() {
 		List<String> currentGuestsCpfs = stayRepository.getCurrentGuestsCpfs();
-		List<Guest> currentGuests = new ArrayList<>();
+		List<GuestDTO> currentGuests = new ArrayList<>();
 		
 		for(String cpf : currentGuestsCpfs) {
 			Optional<Guest> guest = guestRepository.findById(cpf);
 			if(guest.isPresent()) {
-				currentGuests.add(guest.get());
+				currentGuests.add(GuestDTOMapper.fromEntityToDto(guest.get()));
 			}
 		}
 		
@@ -51,14 +88,14 @@ public class StayServiceImpl implements StayService{
 	}
 
 	@Override
-	public Iterable<Guest> getFormerGuests() {
+	public Iterable<GuestDTO> getFormerGuests() {
 		List<String> formerGuestsCpfs = stayRepository.getFormerGuestsCpfs();
-		List<Guest> formerGuests = new ArrayList<>();
+		List<GuestDTO> formerGuests = new ArrayList<>();
 		
 		for(String cpf : formerGuestsCpfs) {
 			Optional<Guest> guest = guestRepository.findById(cpf);
 			if(guest.isPresent()) {
-				formerGuests.add(guest.get());
+				formerGuests.add(GuestDTOMapper.fromEntityToDto(guest.get()));
 			}
 		}
 		
@@ -74,7 +111,7 @@ public class StayServiceImpl implements StayService{
 	}
 
 	@Override
-	public Stay checkOut(int stayId, String checkOutDateTime) {
+	public StayDTO checkOut(int stayId, String checkOutDateTime) {
 		Optional<Stay> stay = stayRepository.findById(stayId);
 		
 		if(stay.isPresent()) {
@@ -87,7 +124,7 @@ public class StayServiceImpl implements StayService{
 				checkedOut.setCheckOutDateTime(checkOutDateTimeFormatted);
 				checkedOut.setFinalValue(PriceCalculator.calculatePrice(checkedOut));
 				stayRepository.save(checkedOut);
-				return checkedOut;
+				return StayDTOMapper.fromEntityToDto(checkedOut);
 			}else {
 				return null;
 			}

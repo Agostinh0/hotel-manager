@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cavalcanti.hotelmanager.models.Guest;
+import com.cavalcanti.hotelmanager.dtos.GuestDTO;
+import com.cavalcanti.hotelmanager.dtos.StayDTO;
+import com.cavalcanti.hotelmanager.dtos.mappers.StayDTOMapper;
 import com.cavalcanti.hotelmanager.models.Stay;
 import com.cavalcanti.hotelmanager.service.StayService;
 
@@ -32,13 +34,13 @@ public class StayController {
 	}
 	
 	@GetMapping
-	public Iterable<Stay> getAllStays(){
+	public Iterable<StayDTO> getAllStays(){
 		return stayService.getAllStays();
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Stay> getStay(@PathVariable Integer id){
-		Optional<Stay> stay = stayService.getStayById(id);
+	public ResponseEntity<StayDTO> getStay(@PathVariable Integer id){
+		Optional<StayDTO> stay = stayService.getStayById(id);
 		if(stay.isPresent()) {
 			return ResponseEntity.ok(stay.get());
 		} else {
@@ -47,31 +49,33 @@ public class StayController {
 	}
 	
 	@GetMapping("/currentGuests")
-	public Iterable<Guest> getCurrentGuests(){
+	public Iterable<GuestDTO> getCurrentGuests(){
 		return stayService.getCurrentGuests();
 	}
 	
 	@GetMapping("/formerGuests")
-	public Iterable<Guest> getFormerGuests(){
+	public Iterable<GuestDTO> getFormerGuests(){
 		return stayService.getFormerGuests();
 	}
 	
 	@PostMapping(value = "/checkIn", consumes = "application/json")
-	public Stay checkIn(@Valid @RequestBody Stay stay) {	
-		return stayService.checkIn(stay);
+	public StayDTO checkIn(@Valid @RequestBody StayDTO dto) {	
+		Stay checkIn = stayService.checkIn(dto.fromDtoToEntity());
+		
+		return StayDTOMapper.fromEntityToDto(checkIn);
 
 	}
 	
 	@PutMapping("/checkOut")
-	public ResponseEntity<Stay> checkOut(
+	public ResponseEntity<StayDTO> checkOut(
 			@RequestParam(name = "stayId", required = true) Integer stayId,
 			@RequestParam(name = "checkOutDateTime", required = true) String checkOutDateTime
 		){
 		
-		Stay stay = stayService.checkOut(stayId, checkOutDateTime);
+		StayDTO dto = stayService.checkOut(stayId, checkOutDateTime);
 		
-		if(stay != null) {
-			return ResponseEntity.ok(stay);
+		if(dto != null) {
+			return ResponseEntity.ok(dto);
 		}else {
 			return ResponseEntity.badRequest().build();
 		}

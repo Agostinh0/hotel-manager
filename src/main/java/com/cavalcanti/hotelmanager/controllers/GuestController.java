@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cavalcanti.hotelmanager.dtos.GuestDTO;
+import com.cavalcanti.hotelmanager.dtos.mappers.GuestDTOMapper;
 import com.cavalcanti.hotelmanager.models.Guest;
 import com.cavalcanti.hotelmanager.service.GuestService;
 
@@ -32,13 +34,13 @@ public class GuestController {
 	}
 	
 	@GetMapping
-	public Iterable<Guest> getAllGuests(){
+	public Iterable<GuestDTO> getAllGuests(){
 		return guestService.getAllGuests();
 	}
 	
 	@GetMapping("/{guestCpf}")
-	public ResponseEntity<Guest> getGuest(@PathVariable String guestCpf){
-		Optional<Guest> guest = guestService.getGuestByCpf(guestCpf);
+	public ResponseEntity<GuestDTO> getGuest(@PathVariable String guestCpf){
+		Optional<GuestDTO> guest = guestService.getGuestByCpf(guestCpf);
 		if(guest.isPresent()) {
 			return ResponseEntity.ok(guest.get());
 		} else {
@@ -47,8 +49,10 @@ public class GuestController {
 	}
 	
 	@PostMapping("/save")
-	public Guest saveGuest(@Valid @RequestBody Guest guest) throws MethodArgumentNotValidException{
-		return guestService.saveGuest(guest);
+	public GuestDTO saveGuest(@Valid @RequestBody GuestDTO dto) throws MethodArgumentNotValidException{
+		Guest guest = guestService.saveGuest(dto.fromDtoToEntity());
+		
+		return GuestDTOMapper.fromEntityToDto(guest);
 	}
 	
 	@DeleteMapping("/delete/{guestCpf}")
@@ -58,7 +62,7 @@ public class GuestController {
 	}
 	
 	@PutMapping("/update")
-	public ResponseEntity<Guest> updateGuest(
+	public ResponseEntity<GuestDTO> updateGuest(
 			@RequestParam(name = "cpf", required = true) String cpf,
 			@RequestParam(name = "name", required = false) String name,
 			@RequestParam(name = "phone", required = false) String phone
@@ -67,7 +71,9 @@ public class GuestController {
 		Guest guest = guestService.updateGuest(cpf, name, phone);
 		
 		if(guest != null) {
-			return ResponseEntity.ok(guest);
+			return ResponseEntity.ok(new GuestDTO(guest.getCpf(),
+										guest.getName(),
+										guest.getPhone()));
 		}else {
 			return ResponseEntity.notFound().build();
 		}	

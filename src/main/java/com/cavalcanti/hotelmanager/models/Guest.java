@@ -13,8 +13,14 @@ import org.hibernate.validator.constraints.br.CPF;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import lombok.Data;
+
+import lombok.NoArgsConstructor;
+
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@NoArgsConstructor
+@Data
 public class Guest {
 	
 	@Id
@@ -36,38 +42,10 @@ public class Guest {
 	)
 	private List<Stay> stays;
 	
-	public Guest() {}
-	
 	public Guest(@CPF String cpf, String name, String phone) {
 		super();
 		this.cpf = cpf;
 		this.name = name;
 		this.phone = phone;
 	}
-
-	public String getCpf() {
-		return cpf;
-	}
-
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-	
-	
 }

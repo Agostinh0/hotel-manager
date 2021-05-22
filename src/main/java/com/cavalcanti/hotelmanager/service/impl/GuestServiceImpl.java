@@ -1,10 +1,13 @@
 package com.cavalcanti.hotelmanager.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cavalcanti.hotelmanager.dtos.GuestDTO;
 import com.cavalcanti.hotelmanager.models.Guest;
 import com.cavalcanti.hotelmanager.repository.GuestRepository;
 import com.cavalcanti.hotelmanager.service.GuestService;
@@ -16,13 +19,31 @@ public class GuestServiceImpl implements GuestService{
 	GuestRepository guestRepository;
 	
 	@Override
-	public Iterable<Guest> getAllGuests() {
-		return guestRepository.findAll();
+	public Iterable<GuestDTO> getAllGuests() {
+		Iterable<Guest> guests = guestRepository.findAll();
+		List<GuestDTO> guestsDtos = new ArrayList<>();
+		
+		for(Guest guest : guests) {
+			guestsDtos.add(new GuestDTO(guest.getCpf(),
+								guest.getName(),
+								guest.getPhone()));
+		}
+		
+		return guestsDtos;
 	}
 
 	@Override
-	public Optional<Guest> getGuestByCpf(String cpf) {
-		return guestRepository.findById(cpf);
+	public Optional<GuestDTO> getGuestByCpf(String cpf) {
+		Optional<Guest> guest = guestRepository.findById(cpf);
+		if(guest.isPresent()) {
+			Optional<GuestDTO> dto = Optional.of(
+					new GuestDTO(guest.get().getCpf(),
+							guest.get().getName(),
+							guest.get().getPhone()));
+			return dto;
+		}else {
+			return null;
+		}
 	}
 
 	@Override
