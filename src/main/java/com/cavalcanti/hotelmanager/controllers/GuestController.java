@@ -18,23 +18,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cavalcanti.hotelmanager.models.Guest;
-import com.cavalcanti.hotelmanager.repository.GuestRepository;
+import com.cavalcanti.hotelmanager.service.GuestService;
 
 @RestController
 @RequestMapping("/guests")
 public class GuestController {
 	
+	GuestService guestService;
+	
 	@Autowired
-	GuestRepository guestRepository;
+	public GuestController(GuestService guestService){
+		this.guestService = guestService;
+	}
 	
 	@GetMapping
 	public Iterable<Guest> getAllGuests(){
-		return guestRepository.findAll();
+		return guestService.getAllGuests();
 	}
 	
 	@GetMapping("/{guestCpf}")
 	public ResponseEntity<Guest> getGuest(@PathVariable String guestCpf){
-		Optional<Guest> guest = guestRepository.findById(guestCpf);
+		Optional<Guest> guest = guestService.getGuestByCpf(guestCpf);
 		if(guest.isPresent()) {
 			return ResponseEntity.ok(guest.get());
 		} else {
@@ -44,31 +48,26 @@ public class GuestController {
 	
 	@PostMapping("/save")
 	public Guest saveGuest(@Valid @RequestBody Guest guest) throws MethodArgumentNotValidException{
-		return guestRepository.save(guest);
+		return guestService.saveGuest(guest);
 	}
 	
 	@DeleteMapping("/delete/{guestCpf}")
 	public ResponseEntity<Guest> deleteGuest(@PathVariable String guestCpf) {
-		guestRepository.deleteById(guestCpf);
+		guestService.deleteGuest(guestCpf);
 		return ResponseEntity.ok().build();
 	}
 	
 	@PutMapping("/update")
-	public ResponseEntity<Guest> checkOut(
+	public ResponseEntity<Guest> updateGuest(
 			@RequestParam(name = "cpf", required = true) String cpf,
 			@RequestParam(name = "name", required = false) String name,
 			@RequestParam(name = "phone", required = false) String phone
 			
 		){
-		Optional<Guest> guest = guestRepository.findById(cpf);
+		Guest guest = guestService.updateGuest(cpf, name, phone);
 		
-		if(guest.isPresent()) {
-			Guest updatedGuest = guest.get();
-			
-			updatedGuest.setName(name);
-			updatedGuest.setPhone(phone);
-			guestRepository.save(updatedGuest);
-			return ResponseEntity.ok(updatedGuest);
+		if(guest != null) {
+			return ResponseEntity.ok(guest);
 		}else {
 			return ResponseEntity.notFound().build();
 		}	
