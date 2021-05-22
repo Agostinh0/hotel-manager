@@ -11,6 +11,10 @@ public interface GuestService {
 	
 	Optional<GuestDTO> getGuestByCpf(String cpf);
 	
+	Optional<GuestDTO> getGuestByPhone(String phone);
+	
+	Optional<GuestDTO> getGuestByName(String name);
+	
 	Guest saveGuest(Guest guest);
 	
 	void deleteGuest(String guestCpf);

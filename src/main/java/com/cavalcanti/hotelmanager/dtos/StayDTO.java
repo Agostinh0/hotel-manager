@@ -2,8 +2,6 @@ package com.cavalcanti.hotelmanager.dtos;
 
 import java.time.LocalDateTime;
 
-import com.cavalcanti.hotelmanager.models.Stay;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,9 +27,5 @@ public class StayDTO {
 		this.guest = guest;
 		this.checkInDateTime = checkInDateTime;
 		this.garageNeeded = garageNeeded;
-	}
-	
-	public Stay fromDtoToEntity() {
-		return new Stay(id, roomId, guest.fromDtoToEntity(), checkInDateTime, garageNeeded);
 	}
 }

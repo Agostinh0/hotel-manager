@@ -60,7 +60,7 @@ public class StayController {
 	
 	@PostMapping(value = "/checkIn", consumes = "application/json")
 	public StayDTO checkIn(@Valid @RequestBody StayDTO dto) {	
-		Stay checkIn = stayService.checkIn(dto.fromDtoToEntity());
+		Stay checkIn = stayService.checkIn(StayDTOMapper.fromDtoToEntity(dto));
 		
 		return StayDTOMapper.fromEntityToDto(checkIn);
 

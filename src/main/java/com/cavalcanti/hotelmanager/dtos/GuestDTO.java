@@ -1,7 +1,5 @@
 package com.cavalcanti.hotelmanager.dtos;
 
-import com.cavalcanti.hotelmanager.models.Guest;
-
 import lombok.Data;
 
 @Data
@@ -15,9 +13,4 @@ public class GuestDTO {
 		this.name = name;
 		this.phone = phone;
 	}
-
-	public Guest fromDtoToEntity() {
-		return new Guest(cpf, name, phone);
-	}
-
 }

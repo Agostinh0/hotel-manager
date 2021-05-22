@@ -38,9 +38,29 @@ public class GuestController {
 		return guestService.getAllGuests();
 	}
 	
-	@GetMapping("/{guestCpf}")
-	public ResponseEntity<GuestDTO> getGuest(@PathVariable String guestCpf){
+	@GetMapping("/cpf/{guestCpf}")
+	public ResponseEntity<GuestDTO> getGuestByCpf(@PathVariable String guestCpf){
 		Optional<GuestDTO> guest = guestService.getGuestByCpf(guestCpf);
+		if(guest.isPresent()) {
+			return ResponseEntity.ok(guest.get());
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
+	
+	@GetMapping("/phone/{guestPhone}")
+	public ResponseEntity<GuestDTO> getGuestByPhone(@PathVariable String guestPhone){
+		Optional<GuestDTO> guest = guestService.getGuestByPhone(guestPhone);
+		if(guest.isPresent()) {
+			return ResponseEntity.ok(guest.get());
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
+	
+	@GetMapping("/name/{guestName}")
+	public ResponseEntity<GuestDTO> getGuestByName(@PathVariable String guestName){
+		Optional<GuestDTO> guest = guestService.getGuestByName(guestName);
 		if(guest.isPresent()) {
 			return ResponseEntity.ok(guest.get());
 		} else {
@@ -50,7 +70,7 @@ public class GuestController {
 	
 	@PostMapping("/save")
 	public GuestDTO saveGuest(@Valid @RequestBody GuestDTO dto) throws MethodArgumentNotValidException{
-		Guest guest = guestService.saveGuest(dto.fromDtoToEntity());
+		Guest guest = guestService.saveGuest(GuestDTOMapper.fromDtoToEntity(dto));
 		
 		return GuestDTOMapper.fromEntityToDto(guest);
 	}
