@@ -19,16 +19,48 @@ public class PriceCalculatorTest {
 	
 	@Test
 	public void shouldCalculateFinalValueByGivenDates() {
-		
+		//Creating scenario
 		Guest guest = new Guest("547.542.810-71", "Matheus", "987654321");
 		Stay stay = 
 				new Stay(1, 201, guest, LocalDateTime.of(LocalDate.of(2021, 05, 21), LocalTime.of(15, 00)), false);
-		stay.setCheckOutTime(LocalDateTime.of(LocalDate.of(2021, 05, 25), LocalTime.of(15, 00)));
+		stay.setCheckOutDateTime(LocalDateTime.of(LocalDate.of(2021, 05, 25), LocalTime.of(15, 00)));
 		
+		//Action
 		Double finalValue = PriceCalculator.calculatePrice(stay);
 		
+		//Validation
 		Assertions.assertEquals(540, finalValue);
 		
+	}
+	
+	@Test
+	public void shouldChargeTheDailyValueEvenIfGuestStaysLessThanOneDay() {
+		//Creating scenario
+		Guest guest = new Guest("547.542.810-71", "Matheus", "987654321");
+		Stay stay = 
+				new Stay(1, 201, guest, LocalDateTime.of(LocalDate.of(2021, 05, 21), LocalTime.of(12, 00)), false);
+		stay.setCheckOutDateTime(LocalDateTime.of(LocalDate.of(2021, 05, 21), LocalTime.of(16, 00)));
+		
+		//Action
+		Double finalValue = PriceCalculator.calculatePrice(stay);
+		
+		//Validation
+		Assertions.assertEquals(120, finalValue);
+	}
+	
+	@Test
+	public void shouldChargeTheDailyValuePlusExtraEvenIfGuestStaysLessThanOneDayAndLeavesAfterCheckOutDeadline() {
+		//Creating scenario
+		Guest guest = new Guest("547.542.810-71", "Matheus", "987654321");
+		Stay stay = 
+				new Stay(1, 201, guest, LocalDateTime.of(LocalDate.of(2021, 05, 21), LocalTime.of(12, 00)), false);
+		stay.setCheckOutDateTime(LocalDateTime.of(LocalDate.of(2021, 05, 21), LocalTime.of(16, 40)));
+		
+		//Action
+		Double finalValue = PriceCalculator.calculatePrice(stay);
+		
+		//Validation
+		Assertions.assertEquals(270, finalValue);
 	}
 	
 	@Test
@@ -37,7 +69,7 @@ public class PriceCalculatorTest {
 		Guest guest = new Guest("547.542.810-71", "Matheus", "987654321");
 		Stay stay = 
 				new Stay(1, 201, guest, LocalDateTime.of(LocalDate.of(2021, 05, 21), LocalTime.of(15, 00)), false);
-		stay.setCheckOutTime(LocalDateTime.of(LocalDate.of(2021, 05, 25), LocalTime.of(16, 31)));
+		stay.setCheckOutDateTime(LocalDateTime.of(LocalDate.of(2021, 05, 25), LocalTime.of(16, 31)));
 		
 		//Action
 		Double finalValue = PriceCalculator.calculatePrice(stay);

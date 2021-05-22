@@ -21,15 +21,19 @@ public class HotelPricingRule {
 	public static List<DayOfWeek> getDaysOfTheWeekSpentOnHotel(Stay stay){
 		
 		long stayDuration = 
-			Duration.between(stay.getCheckInDateTime(), stay.getCheckOutTime()).toDays();
+			Duration.between(stay.getCheckInDateTime(), stay.getCheckOutDateTime()).toDays();
 		
 		List<DayOfWeek> daysSpentOnHotel = IntStream.iterate(0, i -> i + 1)
 			.limit(stayDuration)
 			.mapToObj(i -> stay.getCheckInDateTime().plusDays(i).getDayOfWeek())
 			.collect(Collectors.toList());
 		
+		if(daysSpentOnHotel.isEmpty()) {
+			daysSpentOnHotel.add(stay.getCheckInDateTime().getDayOfWeek());
+		}
+		
 		LocalTime checkOutTime = 
-				LocalTime.of(stay.getCheckOutTime().getHour(), stay.getCheckOutTime().getMinute());
+				LocalTime.of(stay.getCheckOutDateTime().getHour(), stay.getCheckOutDateTime().getMinute());
 		
 		if(checkOutTime.isAfter(LocalTime.of(HotelPricingRuleConstants.DAILY_LIMIT_HOUR
 				, HotelPricingRuleConstants.DAILY_LIMIT_MINUTE))) {

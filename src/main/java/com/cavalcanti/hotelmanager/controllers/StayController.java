@@ -2,6 +2,8 @@ package com.cavalcanti.hotelmanager.controllers;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cavalcanti.hotelmanager.calculator.PriceCalculator;
+import com.cavalcanti.hotelmanager.models.Guest;
 import com.cavalcanti.hotelmanager.models.Stay;
 import com.cavalcanti.hotelmanager.repository.GuestRepository;
 import com.cavalcanti.hotelmanager.repository.StayRepository;
@@ -48,9 +51,39 @@ public class StayController {
 		}
 	}
 	
+	@GetMapping("/currentGuests")
+	public Iterable<Guest> getCurrentGuests(){
+		List<String> currentGuestsCpfs = stayRepository.getCurrentGuestsCpfs();
+		List<Guest> currentGuests = new ArrayList<>();
+		
+		for(String cpf : currentGuestsCpfs) {
+			Optional<Guest> guest = guestRepository.findById(cpf);
+			if(guest.isPresent()) {
+				currentGuests.add(guest.get());
+			}
+		}
+		
+		return currentGuests;
+	}
+	
+	@GetMapping("/formerGuests")
+	public Iterable<Guest> getFormerGuests(){
+		List<String> formerGuestsCpfs = stayRepository.getFormerGuestsCpfs();
+		List<Guest> formerGuests = new ArrayList<>();
+		
+		for(String cpf : formerGuestsCpfs) {
+			Optional<Guest> guest = guestRepository.findById(cpf);
+			if(guest.isPresent()) {
+				formerGuests.add(guest.get());
+			}
+		}
+		
+		return formerGuests;
+	}
+	
 	@PostMapping(value = "/checkIn", consumes = "application/json")
 	public Stay checkIn(@Valid @RequestBody Stay stay) {	
-		stay.setCheckOutTime(null);
+		stay.setCheckOutDateTime(null);
 		stay.setFinalValue(null);
 		
 		return stayRepository.save(stay);
@@ -68,11 +101,16 @@ public class StayController {
 			Stay checkedOut = stay.get();
 			
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+			LocalDateTime checkOutDateTimeFormatted = LocalDateTime.parse(checkOutDateTime, formatter);
 			
-			checkedOut.setCheckOutTime(LocalDateTime.parse(checkOutDateTime, formatter));
-			checkedOut.setFinalValue(PriceCalculator.calculatePrice(checkedOut));
-			stayRepository.save(checkedOut);
-			return ResponseEntity.ok(checkedOut);
+			if(checkOutDateTimeFormatted.isAfter(checkedOut.getCheckInDateTime())) {
+				checkedOut.setCheckOutDateTime(checkOutDateTimeFormatted);
+				checkedOut.setFinalValue(PriceCalculator.calculatePrice(checkedOut));
+				stayRepository.save(checkedOut);
+				return ResponseEntity.ok(checkedOut);
+			}else {
+				return ResponseEntity.badRequest().build();
+			}
 		}else {
 			return ResponseEntity.notFound().build();
 		}	

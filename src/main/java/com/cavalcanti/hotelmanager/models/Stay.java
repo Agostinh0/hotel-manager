@@ -31,7 +31,7 @@ public class Stay {
 	private LocalDateTime checkInDateTime;
 	
 	@Column(name = "check_out_date_time")
-	private LocalDateTime checkOutTime;
+	private LocalDateTime checkOutDateTime;
 	
 	@Column(name = "final_value")
 	private Double finalValue;
@@ -83,12 +83,12 @@ public class Stay {
 		this.checkInDateTime = checkInDateTime;
 	}
 
-	public LocalDateTime getCheckOutTime() {
-		return checkOutTime;
+	public LocalDateTime getCheckOutDateTime() {
+		return checkOutDateTime;
 	}
 
-	public void setCheckOutTime(LocalDateTime checkOutTime) {
-		this.checkOutTime = checkOutTime;
+	public void setCheckOutDateTime(LocalDateTime checkOutTime) {
+		this.checkOutDateTime = checkOutTime;
 	}
 
 	public Double getFinalValue() {
