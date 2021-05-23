@@ -2,10 +2,6 @@
 
 > Projeto que simula uma API de controle de cadastro de hóspedes e realização de check-in e check-out.
 
-### Ajustes e melhorias
-
-O projeto ainda está em desenvolvimento e as próximas atualizações serão voltadas nas seguintes tarefas:
-
 ## 💻 Pré-requisitos para executá-lo em seu ambiente local.
 
 Antes de começar, verifique se você atendeu aos seguintes requisitos:
