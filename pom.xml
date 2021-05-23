@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.cavalcanti</groupId>
 	<artifactId>hotel-manager</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>hotel-manager</name>
 	<description>Hotel Check-In Manager Application</description>
 	<properties>

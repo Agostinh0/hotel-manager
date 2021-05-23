@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import com.cavalcanti.hotelmanager.dtos.mappers.GuestDTOMapper;
 import com.cavalcanti.hotelmanager.models.Guest;
 import com.cavalcanti.hotelmanager.service.GuestService;
 
+@CrossOrigin(origins="http://localhost:4200", maxAge=3600)
 @RestController
 @RequestMapping("/guests")
 public class GuestController {
