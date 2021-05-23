@@ -6,6 +6,8 @@
 
 Antes de começar, verifique se você atendeu aos seguintes requisitos:
 
+* Você possui o Java 8 instalado
+* Você possui o Maven instalado
 * Você possui um esquema de banco de dados ```MySQL```
 * Você possui a variável de ambiente ```CLEARDB_DATABASE_URL``` definida.
 * Você possui a variável de ambiente ```HOTEL_MANAGER_DATABASE_USERNAME``` definida.
@@ -24,6 +26,8 @@ E para gerar uma build do projeto:
 * Execute dentro do diretório do projeto ```mvn clean install```
 
 ## ☕ Usando o Hotel Manager
+
+Para levantar a aplicação, execute ```mvn spring-boot-run```
 
 Para realizar chamadas REST à API, temos as seguintes rotas:
 
