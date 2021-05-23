@@ -2,13 +2,13 @@ package com.cavalcanti.hotelmanager.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cavalcanti.hotelmanager.dtos.GuestDTO;
 import com.cavalcanti.hotelmanager.dtos.mappers.GuestDTOMapper;
+import com.cavalcanti.hotelmanager.exceptions.ResourceNotFoundException;
 import com.cavalcanti.hotelmanager.models.Guest;
 import com.cavalcanti.hotelmanager.repository.GuestRepository;
 import com.cavalcanti.hotelmanager.service.GuestService;
@@ -32,15 +32,12 @@ public class GuestServiceImpl implements GuestService{
 	}
 
 	@Override
-	public Optional<GuestDTO> getGuestByCpf(String cpf) {
-		Optional<Guest> guest = guestRepository.findById(cpf);
-		if(guest.isPresent()) {
-			Optional<GuestDTO> dto = Optional.of(
-					GuestDTOMapper.fromEntityToDto(guest.get()));
-			return dto;
-		}else {
-			return null;
-		}
+	public GuestDTO getGuestByCpf(String cpf) {
+		Guest guest = guestRepository.findById(cpf).orElseThrow(
+				() -> new ResourceNotFoundException("Hóspede com CPF: " + cpf +
+						" não encontrado!")
+				);
+		return GuestDTOMapper.fromEntityToDto(guest);
 	}
 
 	@Override
@@ -55,41 +52,39 @@ public class GuestServiceImpl implements GuestService{
 
 	@Override
 	public Guest updateGuest(String cpf, String name, String phone) {	
-		Optional<Guest> guest = guestRepository.findById(cpf);
+		Guest guest = guestRepository.findById(cpf).orElseThrow(
+				() -> new ResourceNotFoundException("Hóspede com CPF: " + cpf +
+						" não encontrado!")
+				);
 		
-		if(guest.isPresent()) {
-			Guest updatedGuest = guest.get();
-			
-			updatedGuest.setName(name);
-			updatedGuest.setPhone(phone);
-			return guestRepository.save(updatedGuest);
-		}else {
-			return null;
-		}
+		Guest updatedGuest = guest;
+		
+		updatedGuest.setName(name);
+		updatedGuest.setPhone(phone);
+		
+		return guestRepository.save(updatedGuest);
 		
 	}
 	
 	@Override
-	public Optional<GuestDTO> getGuestByName(String name){
-		Optional<Guest> guest = Optional.of(guestRepository.getGuestByName(name));
-		if(guest.isPresent()) {
-			Optional<GuestDTO> dto = Optional.of(
-					GuestDTOMapper.fromEntityToDto(guest.get()));
-			return dto;
+	public GuestDTO getGuestByName(String name){
+		Guest guest = guestRepository.getGuestByName(name);
+		if(guest != null) {
+			return GuestDTOMapper.fromEntityToDto(guest);
 		}else {
-			return Optional.empty();
+			throw new ResourceNotFoundException("Hóspede com nome: " + name +
+						" não encontrado!");
 		}
 	}
 
 	@Override
-	public Optional<GuestDTO> getGuestByPhone(String phone) {
-		Optional<Guest> guest = Optional.of(guestRepository.getGuestByPhone(phone));
-		if(guest.isPresent()) {
-			Optional<GuestDTO> dto = Optional.of(
-					GuestDTOMapper.fromEntityToDto(guest.get()));
-			return dto;
+	public GuestDTO getGuestByPhone(String phone) {
+		Guest guest = guestRepository.getGuestByPhone(phone);
+		if(guest != null) {
+			return GuestDTOMapper.fromEntityToDto(guest);
 		}else {
-			return Optional.empty();
+			throw new ResourceNotFoundException("Hóspede com telefone: " + phone +
+					" não encontrado!");
 		}
 	}
 	

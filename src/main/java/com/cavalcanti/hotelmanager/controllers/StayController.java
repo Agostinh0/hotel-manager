@@ -1,12 +1,7 @@
 package com.cavalcanti.hotelmanager.controllers;
 
-import java.util.Optional;
-
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cavalcanti.hotelmanager.dtos.GuestDTO;
 import com.cavalcanti.hotelmanager.dtos.StayDTO;
 import com.cavalcanti.hotelmanager.dtos.mappers.StayDTOMapper;
+import com.cavalcanti.hotelmanager.exceptions.ResourceNotFoundException;
 import com.cavalcanti.hotelmanager.models.Stay;
 import com.cavalcanti.hotelmanager.service.StayService;
 
-@CrossOrigin(origins="http://localhost:4200", maxAge=3600)
 @RestController
 @RequestMapping("/stays")
 public class StayController {
@@ -42,12 +37,9 @@ public class StayController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<StayDTO> getStay(@PathVariable Integer id){
-		Optional<StayDTO> stay = stayService.getStayById(id);
-		if(stay.isPresent()) {
-			return ResponseEntity.ok(stay.get());
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		StayDTO stay = stayService.getStayById(id);
+		return ResponseEntity.ok(stay);
+
 	}
 	
 	@GetMapping("/currentGuests")
@@ -61,11 +53,13 @@ public class StayController {
 	}
 	
 	@PostMapping(value = "/checkIn", consumes = "application/json")
-	public StayDTO checkIn(@Valid @RequestBody StayDTO dto) {	
+	public StayDTO checkIn(@RequestBody StayDTO dto) {	
 		Stay checkIn = stayService.checkIn(StayDTOMapper.fromDtoToEntity(dto));
-		
-		return StayDTOMapper.fromEntityToDto(checkIn);
-
+		if(checkIn.getGuest() != null) {
+			return StayDTOMapper.fromEntityToDto(checkIn);
+		}else {
+			throw new ResourceNotFoundException("Hóspede não encontrado!");
+		}
 	}
 	
 	@PutMapping("/checkOut")
@@ -79,7 +73,7 @@ public class StayController {
 		if(dto != null) {
 			return ResponseEntity.ok(dto);
 		}else {
-			return ResponseEntity.badRequest().build();
+			throw new ResourceNotFoundException("Estadia não encontrada!");
 		}
 	}
 	

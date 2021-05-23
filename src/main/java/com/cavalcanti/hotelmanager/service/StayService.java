@@ -1,14 +1,12 @@
 package com.cavalcanti.hotelmanager.service;
 
-import java.util.Optional;
-
 import com.cavalcanti.hotelmanager.dtos.GuestDTO;
 import com.cavalcanti.hotelmanager.dtos.StayDTO;
 import com.cavalcanti.hotelmanager.models.Stay;
 
 public interface StayService {
 	
-	Optional<StayDTO> getStayById(int id);
+	StayDTO getStayById(int id);
 	
 	Iterable<StayDTO> getAllStays();
 	

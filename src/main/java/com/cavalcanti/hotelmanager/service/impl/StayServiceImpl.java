@@ -14,6 +14,8 @@ import com.cavalcanti.hotelmanager.dtos.GuestDTO;
 import com.cavalcanti.hotelmanager.dtos.StayDTO;
 import com.cavalcanti.hotelmanager.dtos.mappers.GuestDTOMapper;
 import com.cavalcanti.hotelmanager.dtos.mappers.StayDTOMapper;
+import com.cavalcanti.hotelmanager.exceptions.InvalidCheckOutDateTimeException;
+import com.cavalcanti.hotelmanager.exceptions.ResourceNotFoundException;
 import com.cavalcanti.hotelmanager.models.Guest;
 import com.cavalcanti.hotelmanager.models.Stay;
 import com.cavalcanti.hotelmanager.repository.GuestRepository;
@@ -30,25 +32,12 @@ public class StayServiceImpl implements StayService{
 	GuestRepository guestRepository;
 	
 	@Override
-	public Optional<StayDTO> getStayById(int id) {	
-		Optional<Stay> optionalStay = stayRepository.findById(id);
-		if(optionalStay.isPresent()) {
-			Stay stay = optionalStay.get();
-			
-			Optional<StayDTO> dto = Optional.of(
-					new StayDTO(stay.getId(),
-							stay.getRoomId(),
-							new GuestDTO(stay.getGuest().getCpf(),
-										 stay.getGuest().getName(),
-										 stay.getGuest().getPhone()),
-							stay.getCheckInDateTime(),
-							stay.getCheckOutDateTime(),
-							stay.getFinalValue(),
-							stay.getGarageNeeded()));
-			return dto;
-		}else {
-			return null;
-		}
+	public StayDTO getStayById(int id) {	
+		Stay stay = stayRepository.findById(id).orElseThrow(
+				() -> new ResourceNotFoundException("Estadia com ID: " + id +
+						" não encontrada!")
+				);
+		return StayDTOMapper.fromEntityToDto(stay);
 	}
 
 	@Override
@@ -58,15 +47,7 @@ public class StayServiceImpl implements StayService{
 		List<StayDTO> dtos = new ArrayList<>();
 		
 		for(Stay stay : stays) {
-			dtos.add(new StayDTO(stay.getId(),
-					stay.getRoomId(),
-					new GuestDTO(stay.getGuest().getCpf(),
-								 stay.getGuest().getName(),
-								 stay.getGuest().getPhone()),
-					stay.getCheckInDateTime(),
-					stay.getCheckOutDateTime(),
-					stay.getFinalValue(),
-					stay.getGarageNeeded()));
+			dtos.add(StayDTOMapper.fromEntityToDto(stay));
 		}
 		
 		return dtos;
@@ -112,24 +93,24 @@ public class StayServiceImpl implements StayService{
 
 	@Override
 	public StayDTO checkOut(int stayId, String checkOutDateTime) {
-		Optional<Stay> stay = stayRepository.findById(stayId);
+		Stay stay = stayRepository.findById(stayId).orElseThrow(
+				() -> new ResourceNotFoundException("Estadia com Id: " + stayId +
+						" não encontrado!")
+				);
 		
-		if(stay.isPresent()) {
-			Stay checkedOut = stay.get();
-			
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-			LocalDateTime checkOutDateTimeFormatted = LocalDateTime.parse(checkOutDateTime, formatter);
-			
-			if(checkOutDateTimeFormatted.isAfter(checkedOut.getCheckInDateTime())) {
-				checkedOut.setCheckOutDateTime(checkOutDateTimeFormatted);
-				checkedOut.setFinalValue(PriceCalculator.calculatePrice(checkedOut));
-				stayRepository.save(checkedOut);
-				return StayDTOMapper.fromEntityToDto(checkedOut);
-			}else {
-				return null;
-			}
+		Stay checkedOut = stay;
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+		LocalDateTime checkOutDateTimeFormatted = LocalDateTime.parse(checkOutDateTime, formatter);
+		
+		if(checkOutDateTimeFormatted.isAfter(checkedOut.getCheckInDateTime())) {
+			checkedOut.setCheckOutDateTime(checkOutDateTimeFormatted);
+			checkedOut.setFinalValue(PriceCalculator.calculatePrice(checkedOut));
+			stayRepository.save(checkedOut);
+			return StayDTOMapper.fromEntityToDto(checkedOut);
 		}else {
-			return null;
+			throw new InvalidCheckOutDateTimeException("Data e hora de check-out não podem ser " +
+					" anteoriores à de check-in");
 		}
 	}
 

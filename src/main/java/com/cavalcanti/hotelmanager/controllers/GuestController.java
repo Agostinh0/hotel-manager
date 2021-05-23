@@ -1,13 +1,10 @@
 package com.cavalcanti.hotelmanager.controllers;
 
-import java.util.Optional;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +20,6 @@ import com.cavalcanti.hotelmanager.dtos.mappers.GuestDTOMapper;
 import com.cavalcanti.hotelmanager.models.Guest;
 import com.cavalcanti.hotelmanager.service.GuestService;
 
-@CrossOrigin(origins="http://localhost:4200", maxAge=3600)
 @RestController
 @RequestMapping("/guests")
 public class GuestController {
@@ -42,39 +38,28 @@ public class GuestController {
 	
 	@GetMapping("/cpf/{guestCpf}")
 	public ResponseEntity<GuestDTO> getGuestByCpf(@PathVariable String guestCpf){
-		Optional<GuestDTO> guest = guestService.getGuestByCpf(guestCpf);
-		if(guest.isPresent()) {
-			return ResponseEntity.ok(guest.get());
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		GuestDTO guest = guestService.getGuestByCpf(guestCpf);
+		return ResponseEntity.ok(guest);
 	}
 	
 	@GetMapping("/phone/{guestPhone}")
 	public ResponseEntity<GuestDTO> getGuestByPhone(@PathVariable String guestPhone){
-		Optional<GuestDTO> guest = guestService.getGuestByPhone(guestPhone);
-		if(guest.isPresent()) {
-			return ResponseEntity.ok(guest.get());
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		GuestDTO guest = guestService.getGuestByPhone(guestPhone);
+		return ResponseEntity.ok(guest);
 	}
 	
 	@GetMapping("/name/{guestName}")
 	public ResponseEntity<GuestDTO> getGuestByName(@PathVariable String guestName){
-		Optional<GuestDTO> guest = guestService.getGuestByName(guestName);
-		if(guest.isPresent()) {
-			return ResponseEntity.ok(guest.get());
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		GuestDTO guest = guestService.getGuestByName(guestName);
+		return ResponseEntity.ok(guest);
+
 	}
 	
 	@PostMapping("/save")
-	public GuestDTO saveGuest(@Valid @RequestBody GuestDTO dto) throws MethodArgumentNotValidException{
+	public ResponseEntity<GuestDTO> saveGuest(@Valid @RequestBody GuestDTO dto) throws MethodArgumentNotValidException{
 		Guest guest = guestService.saveGuest(GuestDTOMapper.fromDtoToEntity(dto));
 		
-		return GuestDTOMapper.fromEntityToDto(guest);
+		return ResponseEntity.ok(GuestDTOMapper.fromEntityToDto(guest));
 	}
 	
 	@DeleteMapping("/delete/{guestCpf}")
@@ -92,12 +77,6 @@ public class GuestController {
 		){
 		Guest guest = guestService.updateGuest(cpf, name, phone);
 		
-		if(guest != null) {
-			return ResponseEntity.ok(new GuestDTO(guest.getCpf(),
-										guest.getName(),
-										guest.getPhone()));
-		}else {
-			return ResponseEntity.notFound().build();
-		}	
+		return ResponseEntity.ok(GuestDTOMapper.fromEntityToDto(guest));
 	}
 }
