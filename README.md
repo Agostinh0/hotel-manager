@@ -9,11 +9,40 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 * Você possui o ```Java 8``` instalado
 * Você possui o ```Maven``` instalado
 * Você possui um esquema de banco de dados ```MySQL```
+
+Caso não vá instalar via Docker, verifique se:
 * Você possui a variável de ambiente ```CLEARDB_DATABASE_URL``` definida.
 * Você possui a variável de ambiente ```HOTEL_MANAGER_DATABASE_USERNAME``` definida.
 * Você possui a variável de ambiente ```HOTEL_MANAGER_DATABASE_PASSWORD``` definida.
 
-## 🚀 Instalando o Hotel Manager 
+## 🐳 Instalando o Hotel Manager via Docker
+
+Antes de começar, verifique se você atendeu aos seguintes requisitos:
+
+* Você possui o ```Docker``` instalado
+* Você possui o ```docker-compose``` instalado
+
+Para instalar o Hotel Manager em um contêiner docker, siga estas etapas:
+
+Clone o projeto para o seu ambiente local:
+
+* Selecione o diretório desejado em seu computador e execute ```git clone https://github.com/Agostinh0/hotel-manager.git```.
+
+* Dentro do diretório do projeto clonado, execute ```docker-compose up``` e aguarde alguns minutos até que o contêiner seja criado e inicie a execução
+
+```
+Nota: Esse mecanismo ainda está em processo de melhoria. 
+Durante a primeira execução do docker-compose up, você pode se deparar com 
+uma mensagem avisando que o Hotel Manager não conseguiu se conectar ao banco de dados.
+
+Isso acontece porque o banco de dados MySQL presente no contêiner leva um pouco mais de tempo
+do que o esperado para estar pronto para aceitar conexões.
+
+É esperado que, após a primeira reinicialização automática, o Hotel Manager consiga se conectar
+ao banco de dados normalmente.
+```
+
+## 🚀 Instalando o Hotel Manager em ambiente local
 
 Para instalar o Hotel Manager em seu ambiente local, siga estas etapas:
 
