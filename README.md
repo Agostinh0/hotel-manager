@@ -15,7 +15,7 @@ Antes de começar, verifique se você atendeu aos seguintes requisitos:
 * Você possui a variável de ambiente ```HOTEL_MANAGER_DATABASE_USERNAME``` definida.
 * Você possui a variável de ambiente ```HOTEL_MANAGER_DATABASE_PASSWORD``` definida.
 
-## 🚀 Instalando Hotel Manager 
+## 🚀 Instalando o Hotel Manager 
 
 Para instalar o Hotel Manager em seu ambiente local, siga estas etapas:
 
